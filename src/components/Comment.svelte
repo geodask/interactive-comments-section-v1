@@ -16,7 +16,7 @@
 
 <div class="comment">
   <div class="comment__like-counter">
-    <LikeCounter orientation="vertical" />
+    <LikeCounter score={comment.score} orientation="vertical" />
   </div>
 
   <div class="comment__user-info">

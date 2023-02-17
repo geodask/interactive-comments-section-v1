@@ -5,13 +5,14 @@
   import iconPlusActive from '../assets/images/icon-plus-active.svg';
   import iconPlus from '../assets/images/icon-plus.svg';
 
+  export let score: number = 0;
   export let orientation: 'horizontal' | 'vertical' = 'vertical';
 
   const dispatch = createEventDispatcher();
 
   let isPlusIconActive = false;
   let isMinusIconActive = false;
-  let counter = 0;
+  let counter = score;
 
   const incremenet = () => {
     counter++;
