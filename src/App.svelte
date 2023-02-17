@@ -1,7 +1,14 @@
 <script lang="ts">
+  import Comment from './components/Comment.svelte';
+  import LikeCounter from './components/LikeCounter.svelte';
 </script>
 
-<main />
+<main>
+  <!-- <Comment /> -->
+  <LikeCounter />
+  <LikeCounter />
+
+</main>
 
 <footer>
   <div class="attribution">
