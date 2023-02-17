@@ -33,10 +33,11 @@
     font-size: 14px;
     font-weight: 500;
     display: inline-flex;
+    justify-content: center;
     align-items: center;
     cursor: pointer;
     border-radius: 6px;
-    padding: 0.5rem 1rem;
+    padding: 12px 14px;
     background-color: var(--main-color);
     color: var(--color-neutral-white);
   }
