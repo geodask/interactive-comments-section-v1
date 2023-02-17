@@ -1,8 +1,18 @@
-<script langs="ts">
-  import avatar from '../assets/images/avatars/image-amyrobson.png';
+<script lang="ts">
   import Badge from './Badge.svelte';
   import Button from './Button.svelte';
   import LikeCounter from './LikeCounter.svelte';
+  import type { Comment } from '../services/comments/types';
+  import { useCommentsService } from '../services/comments';
+
+  const commentsService = useCommentsService();
+
+  export let comment: Comment = commentsService.getComments()[0];
+
+  const currentUser = commentsService.getCurrentUser();
+
+  $: isYou = comment.user.username === currentUser.username;
+  $: avatarPromise = import(`../assets/images/avatars/${comment.user.image.png}`);
 </script>
 
 <div class="comment">
@@ -11,25 +21,32 @@
   </div>
 
   <div class="comment__user-info">
-    <img class="comment__user-avatar" width="40" src={avatar} alt="avatar" />
-    <div class="comment__user-name">amyrobson</div>
-    <Badge color="blue" size="sm">you</Badge>
+    {#await avatarPromise}
+      <div class="comment__user-avatar" />
+    {:then { default: avatar }}
+      <img class="comment__user-avatar" width="40" src={avatar} alt="avatar" />
+    {/await}
+    <div class="comment__user-name">{comment.user.username}</div>
+    {#if isYou}
+      <Badge color="blue" size="sm">you</Badge>
+    {/if}
   </div>
 
   <div class="comment__date">
-    <Badge color="gray" type="text-only" size="lg">1 month ago</Badge>
+    <Badge color="gray" type="text-only" size="lg">{comment.createdAt}</Badge>
   </div>
 
   <div class="comment__buttons">
-    <Button icon="reply" type="text-only">Reply</Button>
+    {#if isYou}
+      <Button icon="delete" color="red" type="text-only">Delete</Button>
+      <Button icon="edit" type="text-only">Edit</Button>
+    {:else}
+      <Button icon="reply" type="text-only">Reply</Button>
+    {/if}
   </div>
 
   <p class="comment__content">
-    Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure voluptatem aliquid sequi quod
-    molestiae illum nemo exercitationem sit totam eveniet atque, asperiores possimus officiis
-    inventore eos. Tempore doloribus deleniti placeat excepturi odio id, perspiciatis alias saepe
-    sequi, suscipit laudantium! Libero nisi quas praesentium ut deserunt corrupti architecto et
-    assumenda natus!
+    {comment.content}
   </p>
 </div>
 

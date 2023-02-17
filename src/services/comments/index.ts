@@ -25,7 +25,18 @@ class CommentsService {
     return data.currentUser;
   }
   public getComments() {
-    return data.comments;
+    return data.comments.map((comment) => {
+      return {
+        ...comment,
+        user: {
+          ...comment.user,
+          image: {
+            webp: comment.user.image.webp.split('./images/avatars/')[1],
+            png: comment.user.image.png.split('./images/avatars/')[1],
+          },
+        },
+      };
+    });
   }
 
   public static getInstance() {
