@@ -1,6 +1,7 @@
 <script lang="ts">
   import Badge from './components/Badge.svelte';
   import Button from './components/Button.svelte';
+  import Comment from './components/Comment.svelte';
   import LikeCounter from './components/LikeCounter.svelte';
   import Modal from './components/Modal.svelte';
   import TextArea from './components/TextArea.svelte';
@@ -39,7 +40,7 @@
     }}>Open Modal</Button
   >
 
-  <Modal closeOnBackdropClick bind:open={openModal} title="Delete comment">
+  <Modal bind:open={openModal} title="Delete comment">
     <p>
       Are you sure you want to delete this comment? This will remove the comment and can't be
       undone.
@@ -50,6 +51,8 @@
       <Button color="red">YES, DELETE</Button>
     </svelte:fragment>
   </Modal>
+
+  <Comment />
 </main>
 
 <footer>
