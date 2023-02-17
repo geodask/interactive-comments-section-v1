@@ -4,7 +4,7 @@
   import iconReply from '../assets/images/icon-reply.svg';
 
   export let icon: 'reply' | 'delete' | 'edit' | undefined = undefined;
-  export let color: 'blue' | 'red' = 'blue';
+  export let color: 'blue' | 'red' | 'gray' = 'blue';
   export let iconPosition: 'left' | 'right' = 'left';
   export let type: 'solid' | 'outline' | 'text-only' = 'solid';
 
@@ -30,12 +30,12 @@
 
     border: none;
     padding: 0.5rem 0.8rem;
-    font-size: 15px;
-    font-weight: 700;
+    font-size: 14px;
+    font-weight: 500;
     display: inline-flex;
     align-items: center;
     cursor: pointer;
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 0.5rem 1rem;
     background-color: var(--main-color);
     color: var(--color-neutral-white);
@@ -55,6 +55,10 @@
 
   .button--red {
     --main-color: var(--color-primary-soft-red);
+  }
+
+  .button--gray {
+    --main-color: var(--color-neutral-grayish-blue);
   }
 
   .button--outline {

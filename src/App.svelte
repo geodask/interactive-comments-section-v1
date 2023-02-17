@@ -7,9 +7,14 @@
 
 <main>
   <LikeCounter />
-  <Button>Reply</Button>
+  <Button>REPLY</Button>
   <Button color="red" type="outline">Delete</Button>
   <Button color="blue" type="text-only" icon="edit">Edit</Button>
+  <Button color="red" type="text-only" icon="delete">Delete</Button>
+  <Button color="blue">SEND</Button>
+
+  <Button color="gray">NO, CANCEL</Button>
+  <Button color="red">YES, DELETE</Button>
 
 
   <Badge color="blue" size="sm">You</Badge>
