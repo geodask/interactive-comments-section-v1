@@ -1,13 +1,17 @@
 <script lang="ts">
-  import ActionButton from './components/ActionButton.svelte';
   import Badge from './components/Badge.svelte';
+  import Button from './components/Button.svelte';
   import LikeCounter from './components/LikeCounter.svelte';
   import TextArea from './components/TextArea.svelte';
 </script>
 
 <main>
   <LikeCounter />
-  <ActionButton action="edit" />
+  <Button>Reply</Button>
+  <Button color="red" type="outline">Delete</Button>
+  <Button color="blue" type="text-only" icon="edit">Edit</Button>
+
+
   <Badge color="blue" size="sm">You</Badge>
   <Badge color="blue">You</Badge>
   <Badge color="blue" size="lg">You</Badge>
