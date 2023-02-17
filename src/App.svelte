@@ -1,12 +1,17 @@
 <script lang="ts">
   import Badge from './components/Badge.svelte';
   import Button from './components/Button.svelte';
-  import Comment from './components/Comment.svelte';
+  import CommentComponent from './components/Comment.svelte';
   import LikeCounter from './components/LikeCounter.svelte';
   import Modal from './components/Modal.svelte';
   import TextArea from './components/TextArea.svelte';
+  import { useCommentsService } from './services/comments';
+  import type { Comment } from './services/comments/types';
 
   export let openModal = false;
+
+  const commentsService = useCommentsService();
+  const comment: Comment = commentsService.getComments()[0];
 </script>
 
 <main>
@@ -52,7 +57,7 @@
     </svelte:fragment>
   </Modal>
 
-  <Comment />
+  <CommentComponent {comment} />
 </main>
 
 <footer>

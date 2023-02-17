@@ -1,14 +1,13 @@
 <script lang="ts">
+  import { useCommentsService } from '../services/comments';
+  import type { Comment } from '../services/comments/types';
   import Badge from './Badge.svelte';
   import Button from './Button.svelte';
   import LikeCounter from './LikeCounter.svelte';
-  import type { Comment } from '../services/comments/types';
-  import { useCommentsService } from '../services/comments';
+
+  export let comment: Comment;
 
   const commentsService = useCommentsService();
-
-  export let comment: Comment = commentsService.getComments()[0];
-
   const currentUser = commentsService.getCurrentUser();
 
   $: isYou = comment.user.username === currentUser.username;
@@ -46,6 +45,9 @@
   </div>
 
   <p class="comment__content">
+    {#if comment.replyingTo}
+      <span class="comment__replying-to">@{comment.replyingTo}</span>
+    {/if}
     {comment.content}
   </p>
 </div>
@@ -87,5 +89,10 @@
     grid-row: 2 / 3;
     grid-column: 2 / 5;
     color: var(--color-neutral-grayish-blue);
+  }
+
+  .comment__replying-to {
+    color: var(--color-primary-moderate-blue);
+    font-weight: 700;
   }
 </style>
