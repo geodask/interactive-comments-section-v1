@@ -2,6 +2,7 @@
   import ActionButton from './components/ActionButton.svelte';
   import Badge from './components/Badge.svelte';
   import LikeCounter from './components/LikeCounter.svelte';
+  import TextArea from './components/TextArea.svelte';
 </script>
 
 <main>
@@ -18,6 +19,8 @@
   <Badge color="gray" type="text-only" size="sm">2 months ago</Badge>
   <Badge color="gray" type="text-only">2 months ago</Badge>
   <Badge color="gray" type="text-only" size="lg">2 months ago</Badge>
+
+  <TextArea />
 </main>
 
 <footer>
