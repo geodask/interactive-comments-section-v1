@@ -1,10 +1,11 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import { fade } from 'svelte/transition';
   import iconMinusActive from '../assets/images/icon-minus-active.svg';
   import iconMinus from '../assets/images/icon-minus.svg';
   import iconPlusActive from '../assets/images/icon-plus-active.svg';
   import iconPlus from '../assets/images/icon-plus.svg';
+
+  export let orientation: 'horizontal' | 'vertical' = 'vertical';
 
   const dispatch = createEventDispatcher();
 
@@ -33,7 +34,7 @@
   const dispatchUpdateEvent = () => dispatch('update', counter);
 </script>
 
-<div class="counter">
+<div class="counter counter--{orientation}">
   <button
     class="counter__button"
     on:click={incremenet}
@@ -54,16 +55,25 @@
     on:mouseleave={() => setIconActive('minus', false)}
     on:blur={() => setIconActive('minus', false)}
   >
-    <img hidden={isMinusIconActive} src={iconMinus} alt="plus" />
-    <img hidden={!isMinusIconActive} src={iconMinusActive} alt="plus" />
+    <img hidden={isMinusIconActive} src={iconMinus} alt="minus" />
+    <img hidden={!isMinusIconActive} src={iconMinusActive} alt="minus" />
   </button>
 </div>
 
-<style>
+<style scoped>
   .counter {
+    display: inline-flex;
     border-radius: 8px;
-    display: inline-block;
     background: var(--color-neutral-light-gray);
+  }
+
+  .counter--horizontal {
+    display: inline-flex;
+    align-items: baseline;
+  }
+
+  .counter--vertical {
+    flex-direction: column;
   }
 
   .counter__label {
@@ -72,11 +82,23 @@
     text-align: center;
   }
 
+  .counter--horizontal > .counter__label {
+    min-width: 28px;
+  }
+
+  .counter--vertical > .counter__label {
+    min-width: 50px;
+  }
+
   .counter__button {
     background: transparent;
     width: 100%;
     padding: 1rem;
     border: none;
     cursor: pointer;
+  }
+
+  .counter__button > img[alt='minus'] {
+    margin-bottom: 3px;
   }
 </style>

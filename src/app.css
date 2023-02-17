@@ -22,3 +22,9 @@ body {
   font-size: var(--font-size-paragraph);
   font-weight: 400;
 }
+
+input,
+button,
+textarea {
+  font-family: inherit;
+}

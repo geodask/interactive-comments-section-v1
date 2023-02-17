@@ -1,13 +1,23 @@
 <script lang="ts">
-  import Comment from './components/Comment.svelte';
+  import ActionButton from './components/ActionButton.svelte';
+  import Badge from './components/Badge.svelte';
   import LikeCounter from './components/LikeCounter.svelte';
 </script>
 
 <main>
-  <!-- <Comment /> -->
   <LikeCounter />
-  <LikeCounter />
+  <ActionButton action="edit" />
+  <Badge color="blue" size="sm">You</Badge>
+  <Badge color="blue">You</Badge>
+  <Badge color="blue" size="lg">You</Badge>
 
+  <Badge color="red" type="outline" size="sm">2 months ago</Badge>
+  <Badge color="red" type="outline">2 months ago</Badge>
+  <Badge color="red" type="outline" size="lg">2 months ago</Badge>
+
+  <Badge color="gray" type="text-only" size="sm">2 months ago</Badge>
+  <Badge color="gray" type="text-only">2 months ago</Badge>
+  <Badge color="gray" type="text-only" size="lg">2 months ago</Badge>
 </main>
 
 <footer>
