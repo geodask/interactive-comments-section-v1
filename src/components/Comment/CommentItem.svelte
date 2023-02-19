@@ -14,6 +14,12 @@
   $: avatarPromise = import(`../../assets/images/avatars/${comment.user.image.png}`);
 
   console.log(comment.user.image);
+
+  const onDelete = () => {};
+
+  const onReply = () => {};
+
+  const onEdit = () => {};
 </script>
 
 <div class="comment">
@@ -39,10 +45,10 @@
 
   <div class="comment__buttons">
     {#if isYou}
-      <Button icon="delete" color="red" type="text-only">Delete</Button>
-      <Button icon="edit" type="text-only">Edit</Button>
+      <Button on:click={onDelete} icon="delete" color="red" type="text-only">Delete</Button>
+      <Button on:click={onEdit} icon="edit" type="text-only">Edit</Button>
     {:else}
-      <Button icon="reply" type="text-only">Reply</Button>
+      <Button on:click={onReply} icon="reply" type="text-only">Reply</Button>
     {/if}
   </div>
 
