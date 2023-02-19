@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { useCommentsService } from '../services/comments';
-  import type { Comment } from '../services/comments/types';
-  import Badge from './Badge.svelte';
-  import Button from './Button.svelte';
-  import LikeCounter from './LikeCounter.svelte';
+  import { useCommentsService } from '../../services/comments';
+  import type { Comment } from '../../services/comments/types';
+  import Badge from '../Badge.svelte';
+  import Button from '../Button.svelte';
+  import LikeCounter from '../LikeCounter.svelte';
 
   export let comment: Comment;
 
@@ -11,7 +11,9 @@
   const currentUser = commentsService.getCurrentUser();
 
   $: isYou = comment.user.username === currentUser.username;
-  $: avatarPromise = import(`../assets/images/avatars/${comment.user.image.png}`);
+  $: avatarPromise = import(`../../assets/images/avatars/${comment.user.image.png}`);
+
+  console.log(comment.user.image);
 </script>
 
 <div class="comment">

@@ -1,7 +1,25 @@
-import type { Comment, User } from './types';
 import mockData from '../mock/data.json';
+import type { Comment, User } from './types';
 
 const data: { currentUser: User; comments: Comment[] } = mockData;
+
+const mapImagesForUser = (user: User): User => {
+  return {
+    ...user,
+    image: {
+      webp: user.image.webp.split('./images/avatars/')[1],
+      png: user.image.png.split('./images/avatars/')[1],
+    },
+  };
+};
+
+const mapImagesForComment = (comment: Comment): Comment => {
+  return {
+    ...comment,
+    user: mapImagesForUser(comment.user),
+    replies: comment.replies && comment.replies.map(mapImagesForComment),
+  };
+};
 
 class CommentsService {
   public static instance: CommentsService;
@@ -22,21 +40,10 @@ class CommentsService {
   }
 
   public getCurrentUser() {
-    return data.currentUser;
+    return mapImagesForUser(data.currentUser);
   }
   public getComments() {
-    return data.comments.map((comment) => {
-      return {
-        ...comment,
-        user: {
-          ...comment.user,
-          image: {
-            webp: comment.user.image.webp.split('./images/avatars/')[1],
-            png: comment.user.image.png.split('./images/avatars/')[1],
-          },
-        },
-      };
-    });
+    return data.comments.map(mapImagesForComment);
   }
 
   public static getInstance() {

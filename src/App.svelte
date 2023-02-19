@@ -1,7 +1,8 @@
 <script lang="ts">
   import Badge from './components/Badge.svelte';
   import Button from './components/Button.svelte';
-  import CommentThread from './components/CommentThread.svelte';
+  import CommentThread from './components/Comment/CommentThread.svelte';
+  import NewComment from './components/Comment/NewComment.svelte';
   import LikeCounter from './components/LikeCounter.svelte';
   import Modal from './components/Modal.svelte';
   import TextArea from './components/TextArea.svelte';
@@ -57,7 +58,10 @@
     </svelte:fragment>
   </Modal>
 
-  <CommentThread {comments} />
+  <div class="container">
+    <CommentThread {comments} />
+    <NewComment />
+  </div>
 </main>
 
 <footer>
@@ -70,6 +74,10 @@
 </footer>
 
 <style>
+  .container {
+    width: 50%;
+    margin: auto;
+  }
   .attribution {
     font-size: 11px;
     text-align: center;
