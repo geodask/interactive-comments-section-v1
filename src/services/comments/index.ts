@@ -21,10 +21,22 @@ class CommentsService {
   private currentUser: User = undefined;
 
   private constructor() {
-    const { comments, currentUser } = mockData;
-    this.comments = this.applyImagesToComments(comments);
+    let comments: Comment[];
+    let currentUser: User;
+    const commentsStr = localStorage.getItem('comments');
+    const currentUserStr = localStorage.getItem('currentUser');
+    if (commentsStr) {
+      comments = JSON.parse(commentsStr);
+      currentUser = JSON.parse(currentUserStr);
+    } else {
+      comments = mockData.comments;
+      currentUser = mockData.currentUser;
+      localStorage.setItem('comments', JSON.stringify(comments));
+      localStorage.setItem('currentUser', JSON.stringify(currentUser));
+    }
+    this.comments = comments;
     this.lastId = this.flattenComments(comments).length;
-    this.currentUser = this.applyImagesToUser(currentUser);
+    this.currentUser = currentUser;
   }
 
   @Delay(200)
@@ -42,12 +54,23 @@ class CommentsService {
     return Promise.resolve(this.deleteCommentRecursively(this.comments, id));
   }
 
+  public getCurrentUser(): Promise<User> {
+    return Promise.resolve(this.currentUser);
+  }
+
+  public getComments(): Promise<Comment[]> {
+    const comments = [...this.comments];
+    comments.sort((a, b) => b.score - a.score);
+    return Promise.resolve(this.sortCommentsRecursively(comments, 'score'));
+  }
+
   private updateCommentRecursively(comments: Comment[], payload: UpdateCommentPayload): Comment {
     for (let i = 0; i < comments.length; i++) {
       if (comments[i].id === payload.id) {
         comments[i].content = payload.content ? payload.content : comments[i].content;
         comments[i].score =
           payload.score !== null && payload.score !== undefined ? payload.score : comments[i].score;
+        localStorage.setItem('comments', JSON.stringify(this.comments));
         return comments[i];
       } else {
         if (comments[i].replies && comments[i].replies.length > 0) {
@@ -89,6 +112,7 @@ class CommentsService {
         if (comments[i].id === payload.replyTo) {
           newComment.replyingTo = comments[i].user.username;
           comments[i].replies.push(newComment);
+          localStorage.setItem('comments', JSON.stringify(this.comments));
           return newComment;
         } else {
           if (comments[i].replies && comments[i].replies.length > 0) {
@@ -99,6 +123,7 @@ class CommentsService {
       }
     } else {
       comments.push(newComment);
+      localStorage.setItem('comments', JSON.stringify(this.comments));
       return newComment;
     }
   }
@@ -107,6 +132,7 @@ class CommentsService {
     for (let i = 0; i < comments.length; i++) {
       if (comments[i].id === id) {
         comments.splice(i, 1);
+        localStorage.setItem('comments', JSON.stringify(this.comments));
         return true; // return true if comment is found and deleted
       } else {
         // recursively search for comment in replies
@@ -119,41 +145,11 @@ class CommentsService {
     return false; // return false if comment is not found
   }
 
-  public getCurrentUser() {
-    return Promise.resolve(this.currentUser);
-  }
-
-  public getComments() {
-    const comments = [...this.comments];
-    comments.sort((a, b) => b.score - a.score);
-    return Promise.resolve(this.sortCommentsRecursively(comments, 'score'));
-  }
-
   public static getInstance() {
     if (!CommentsService.instance) {
       CommentsService.instance = new CommentsService();
     }
     return CommentsService.instance;
-  }
-
-  private applyImagesToUser(user: User): User {
-    return {
-      ...user,
-      image: {
-        webp: user.image.webp.split('./images/avatars/')[1],
-        png: user.image.png.split('./images/avatars/')[1],
-      },
-    };
-  }
-
-  private applyImagesToComments(comments: Comment[]): Comment[] {
-    return comments.map((comment) => {
-      return {
-        ...comment,
-        user: this.applyImagesToUser(comment.user),
-        replies: comment.replies && this.applyImagesToComments(comment.replies),
-      };
-    });
   }
 
   private flattenComments(comments: Comment[]): Comment[] {

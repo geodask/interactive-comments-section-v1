@@ -14,7 +14,6 @@
     getContext<CommentsContext>(COMMENTS_KEY);
 
   $: isYou = comment.user.username === $currentUser.username;
-  $: avatarPromise = import(`./../assets/images/avatars/${comment.user.image.png}`);
 
   let loading = false;
   let openReply = false;
@@ -32,11 +31,7 @@
   </div>
 
   <div class="comment__user-info">
-    {#await avatarPromise}
-      <div class="comment__user-avatar" />
-    {:then { default: avatar }}
-      <img class="comment__user-avatar" width="40" src={avatar} alt="avatar" />
-    {/await}
+    <img class="comment__user-avatar" width="40" src={comment.user.image.png} alt="avatar" />
     <div class="comment__user-name">{comment.user.username}</div>
     {#if isYou}
       <Badge color="blue" size="sm">you</Badge>

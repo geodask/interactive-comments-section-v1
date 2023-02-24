@@ -9,22 +9,15 @@
 
   const { currentUser, onReply, onCreate } = getContext<CommentsContext>(COMMENTS_KEY);
 
-  $: yourAvatarPromise =
-    $currentUser && import(`../assets/images/avatars/${$currentUser.image.png}`);
-
   let loading = false;
   let content: string = '';
 </script>
 
-{#if open && yourAvatarPromise}
+{#if open}
   <div class="comment {loading ? 'comment--disabled' : ''}">
-    <div class="comment__user-info">
-      {#await yourAvatarPromise}
-        <div class="comment__user-avatar" />
-      {:then { default: avatar }}
-        <img class="comment__user-avatar" width="40" src={avatar} alt="avatar" />
-      {/await}
-    </div>
+    {#if $currentUser}
+      <img class="comment__user-avatar" width="40" src={$currentUser.image.png} alt="avatar" />
+    {/if}
 
     <div class="comment__content">
       <TextArea bind:content />
