@@ -7,22 +7,23 @@
   };
 </script>
 
-<textarea
-  on:change={onChange}
-  data-placeholder={placeholder}
-  contenteditable="true"
-  class="text-area"
-/>
+<div class="text-area-container">
+  <textarea
+    on:change={onChange}
+    data-placeholder={placeholder}
+    contenteditable="true"
+    class="text-area"
+  />
+</div>
 
 <style scoped>
   .text-area {
-    border-radius: inherit;
+    border-radius: 12px;
     padding: 12px 24px;
-    overflow-y: auto;
     min-height: 100px;
     height: 100%;
     width: 100%;
-    scrollbar-gutter: 10px;
+    scrollbar-gutter: 100px;
     color: var(--color-neutral-grayish-blue);
     font-size: inherit;
     border: 1px solid var(--color-primary-moderate-blue);

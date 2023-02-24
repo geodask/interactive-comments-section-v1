@@ -1,10 +1,10 @@
 <script lang="ts" context="module">
   import { onMount, setContext } from 'svelte';
   import { writable, type Writable } from 'svelte/store';
-  import { useCommentsService } from '../../services/comments';
-  import type { Comment, User } from '../../services/comments/types';
+  import { useCommentsService } from '../services/comments';
+  import type { Comment, User } from '../services/comments/types';
 
-  export const COMMENTS = Symbol('comments');
+  export const COMMENTS_KEY = Symbol('comments');
 
   export type CommentsContext = {
     currentUser: Writable<User>;
@@ -13,6 +13,7 @@
     onScoreUpdate: (id: number, score: number) => Promise<void>;
     onEdit: (id: number, content: string) => Promise<void>;
     onReply: (id: number, content: string) => Promise<void>;
+    onCreate: (content: string) => Promise<void>;
   };
 </script>
 
@@ -22,7 +23,7 @@
   let currentUser: Writable<User> = writable(null);
   let comments: Writable<Comment[]> = writable([]);
 
-  setContext<CommentsContext>(COMMENTS, {
+  setContext<CommentsContext>(COMMENTS_KEY, {
     currentUser,
     comments,
     onDelete: async (id: number) => {
@@ -44,6 +45,12 @@
     onReply: async (id: number, content: string) => {
       await commentsService.createComment({
         replyTo: id,
+        content: content,
+      });
+      $comments = await commentsService.getComments();
+    },
+    onCreate: async (content: string) => {
+      await commentsService.createComment({
         content: content,
       });
       $comments = await commentsService.getComments();

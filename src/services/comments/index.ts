@@ -84,17 +84,22 @@ class CommentsService {
       user: this.currentUser,
     };
 
-    for (let i = 0; i < comments.length; i++) {
-      if (comments[i].id === payload.replyTo) {
-        newComment.replyingTo = comments[i].user.username;
-        comments[i].replies.push(newComment);
-        return newComment;
-      } else {
-        if (comments[i].replies && comments[i].replies.length > 0) {
-          const reply = this.createCommentRecursively(comments[i].replies, payload);
-          if (reply) return reply;
+    if (payload.replyTo) {
+      for (let i = 0; i < comments.length; i++) {
+        if (comments[i].id === payload.replyTo) {
+          newComment.replyingTo = comments[i].user.username;
+          comments[i].replies.push(newComment);
+          return newComment;
+        } else {
+          if (comments[i].replies && comments[i].replies.length > 0) {
+            const reply = this.createCommentRecursively(comments[i].replies, payload);
+            if (reply) return reply;
+          }
         }
       }
+    } else {
+      comments.push(newComment);
+      return newComment;
     }
   }
 

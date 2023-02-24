@@ -1,28 +1,23 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import type { Comment } from '../../services/comments/types';
-  import Badge from '../Badge.svelte';
-  import Button from '../Button.svelte';
-  import LikeCounter from '../LikeCounter.svelte';
-  import TextArea from '../TextArea.svelte';
-  import { COMMENTS, type CommentsContext } from './CommentsProvider.svelte';
+  import type { Comment } from '../services/comments/types';
+  import Badge from './Badge.svelte';
+  import Button from './Button.svelte';
+  import LikeCounter from './LikeCounter.svelte';
+  import CommentNew from './CommentNew.svelte';
+  import { COMMENTS_KEY, type CommentsContext } from './CommentsProvider.svelte';
 
   export let comment: Comment = undefined;
   export let replyingTo: string = undefined;
 
-  const { currentUser, onDelete, onEdit, onReply, onScoreUpdate } =
-    getContext<CommentsContext>(COMMENTS);
+  const { currentUser, onDelete, onEdit, onScoreUpdate } =
+    getContext<CommentsContext>(COMMENTS_KEY);
 
-  $: isYou = comment?.user?.username === $currentUser?.username;
-  $: yourAvatarPromise =
-    $currentUser && import(`../../assets/images/avatars/${$currentUser.image.png}`);
-
-  $: avatarPromise = import(`../../assets/images/avatars/${comment.user.image.png}`);
+  $: isYou = comment.user.username === $currentUser.username;
+  $: avatarPromise = import(`./../assets/images/avatars/${comment.user.image.png}`);
 
   let loading = false;
-  let reply = false;
-  let replySending = false;
-  let replyContent: string = '';
+  let openReply = false;
 </script>
 
 <div class="comment {loading ? 'comment--disabled' : ''}">
@@ -68,7 +63,7 @@
     {:else}
       <Button
         on:click={() => {
-          reply = true;
+          openReply = true;
         }}
         icon="reply"
         type="text-only">Reply</Button
@@ -84,29 +79,9 @@
   </p>
 </div>
 
-{#if reply}
-  <div class="comment {replySending ? 'comment--disabled' : ''}">
-    <div class="comment__user-info">
-      {#await yourAvatarPromise}
-        <div class="comment__user-avatar" />
-      {:then { default: avatar }}
-        <img class="comment__user-avatar" width="40" src={avatar} alt="avatar" />
-      {/await}
-    </div>
-
-    <TextArea bind:content={replyContent} />
-
-    <Button
-      on:click={async () => {
-        replySending = true;
-        await onReply(comment.id, replyContent);
-        reply = false;
-        replySending = false;
-      }}
-    >
-      SEND
-    </Button>
-  </div>
+{#if openReply}
+  <br />
+  <CommentNew bind:open={openReply} replyToId={comment.id} />
 {/if}
 
 <style scoped>
@@ -139,6 +114,12 @@
     column-gap: 0.5rem;
     font-weight: 700;
     color: var(--color-neutral-dark-blue);
+  }
+
+  .comment--reply .comment__buttons {
+    grid-row: 1 / 3;
+    grid-column: 3 / 4;
+    justify-self: flex-end;
   }
 
   .comment__date {
