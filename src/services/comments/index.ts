@@ -24,10 +24,57 @@ class CommentsService {
     const { comments, currentUser } = mockData;
     this.comments = this.applyImagesToComments(comments);
     this.lastId = this.flattenComments(comments).length;
-    this.currentUser = currentUser;
+    this.currentUser = this.applyImagesToUser(currentUser);
   }
 
+  @Delay(200)
   public createComment(payload: CreateCommentPayload): Promise<Comment> {
+    return Promise.resolve(this.createCommentRecursively(this.comments, payload));
+  }
+
+  @Delay(200)
+  public updateComment(payload: UpdateCommentPayload): Promise<Comment> {
+    return Promise.resolve(this.updateCommentRecursively(this.comments, payload));
+  }
+
+  @Delay(200)
+  public deleteComment(id: number): Promise<boolean> {
+    return Promise.resolve(this.deleteCommentRecursively(this.comments, id));
+  }
+
+  private updateCommentRecursively(comments: Comment[], payload: UpdateCommentPayload): Comment {
+    for (let i = 0; i < comments.length; i++) {
+      if (comments[i].id === payload.id) {
+        comments[i].content = payload.content ? payload.content : comments[i].content;
+        comments[i].score =
+          payload.score !== null && payload.score !== undefined ? payload.score : comments[i].score;
+        return comments[i];
+      } else {
+        if (comments[i].replies && comments[i].replies.length > 0) {
+          const reply = this.updateCommentRecursively(comments[i].replies, payload);
+          if (reply) return reply;
+        }
+      }
+    }
+  }
+
+  private sortCommentsRecursively(comments: Comment[], by: 'score' | 'date'): Comment[] {
+    comments.sort((a, b) => {
+      if (by === 'score') {
+        return b.score - a.score;
+      } else {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      }
+    });
+    comments.forEach((comment) => {
+      if (comment.replies && comment.replies.length > 0) {
+        this.sortCommentsRecursively(comment.replies, 'date');
+      }
+    });
+    return comments;
+  }
+
+  private createCommentRecursively(comments: Comment[], payload: CreateCommentPayload): Comment {
     const newComment: Comment = {
       content: payload.content,
       createdAt: new Date().toISOString(),
@@ -37,45 +84,18 @@ class CommentsService {
       user: this.currentUser,
     };
 
-    if ('replyTo' in payload) {
-      // Find the comment that this comment is replying to
-      const comment = this.comments.find((c) => c.id === payload.replyTo);
-      if (comment) {
-        newComment.replyingTo = comment.user.username;
-        comment.replies.push(newComment);
+    for (let i = 0; i < comments.length; i++) {
+      if (comments[i].id === payload.replyTo) {
+        newComment.replyingTo = comments[i].user.username;
+        comments[i].replies.push(newComment);
+        return newComment;
       } else {
-        const comment = this.comments.find((c) => c.replies.find((r) => r.id === payload.replyTo));
-        if (comment) {
-          newComment.replyingTo = comment.user.username;
-          comment.replies.push(newComment);
+        if (comments[i].replies && comments[i].replies.length > 0) {
+          const reply = this.createCommentRecursively(comments[i].replies, payload);
+          if (reply) return reply;
         }
       }
-    } else {
-      this.comments.push(newComment);
     }
-    return Promise.resolve(newComment);
-  }
-
-  @Delay(1000)
-  public updateComment(payload: UpdateCommentPayload): Promise<Comment> {
-    let comment = this.comments.find((c) => c.id === payload.id);
-    if (comment) {
-      comment.content = !!payload.content && payload.content;
-      comment.score = !!payload.score && payload.score;
-      return Promise.resolve(comment);
-    }
-
-    comment = this.comments.find((c) => c.replies.find((r) => r.id === payload.id));
-    if (comment) {
-      comment.content = !!payload.content && payload.content;
-      comment.score = !!payload.score && payload.score;
-    }
-    return Promise.resolve(comment);
-  }
-
-  @Delay(1000)
-  public deleteComment(id: number): Promise<boolean> {
-    return Promise.resolve(this.deleteCommentRecursively(this.comments, id));
   }
 
   private deleteCommentRecursively(comments, id) {
@@ -94,20 +114,6 @@ class CommentsService {
     return false; // return false if comment is not found
   }
 
-  private findComment = (id: number, comments: Comment[]): Comment => {
-    let comment = comments.find((c) => c.id === id);
-    if (comment) {
-      return comment;
-    } else {
-      for (const c of comments) {
-        comment = this.findComment(id, c.replies);
-        if (comment) {
-          return comment;
-        }
-      }
-    }
-  };
-
   public getCurrentUser() {
     return Promise.resolve(this.currentUser);
   }
@@ -115,7 +121,7 @@ class CommentsService {
   public getComments() {
     const comments = [...this.comments];
     comments.sort((a, b) => b.score - a.score);
-    return Promise.resolve(comments);
+    return Promise.resolve(this.sortCommentsRecursively(comments, 'score'));
   }
 
   public static getInstance() {

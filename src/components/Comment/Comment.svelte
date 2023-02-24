@@ -4,22 +4,36 @@
   import Badge from '../Badge.svelte';
   import Button from '../Button.svelte';
   import LikeCounter from '../LikeCounter.svelte';
+  import TextArea from '../TextArea.svelte';
   import { COMMENTS, type CommentsContext } from './CommentsProvider.svelte';
 
   export let comment: Comment = undefined;
   export let replyingTo: string = undefined;
 
-  const { currentUser, onDelete, onEdit, onReply } = getContext<CommentsContext>(COMMENTS);
+  const { currentUser, onDelete, onEdit, onReply, onScoreUpdate } =
+    getContext<CommentsContext>(COMMENTS);
 
   $: isYou = comment?.user?.username === $currentUser?.username;
+  $: yourAvatarPromise =
+    $currentUser && import(`../../assets/images/avatars/${$currentUser.image.png}`);
+
   $: avatarPromise = import(`../../assets/images/avatars/${comment.user.image.png}`);
 
   let loading = false;
+  let reply = false;
+  let replySending = false;
+  let replyContent: string = '';
 </script>
 
 <div class="comment {loading ? 'comment--disabled' : ''}">
   <div class="comment__like-counter">
-    <LikeCounter score={comment.score} orientation="vertical" />
+    <LikeCounter
+      on:update={(event) => {
+        onScoreUpdate(comment.id, event.detail);
+      }}
+      score={comment.score}
+      orientation="vertical"
+    />
   </div>
 
   <div class="comment__user-info">
@@ -52,7 +66,13 @@
       >
       <Button on:click={() => onEdit(comment.id, '')} icon="edit" type="text-only">Edit</Button>
     {:else}
-      <Button on:click={() => onReply(comment.id, '')} icon="reply" type="text-only">Reply</Button>
+      <Button
+        on:click={() => {
+          reply = true;
+        }}
+        icon="reply"
+        type="text-only">Reply</Button
+      >
     {/if}
   </div>
 
@@ -63,6 +83,31 @@
     {comment.content}
   </p>
 </div>
+
+{#if reply}
+  <div class="comment {replySending ? 'comment--disabled' : ''}">
+    <div class="comment__user-info">
+      {#await yourAvatarPromise}
+        <div class="comment__user-avatar" />
+      {:then { default: avatar }}
+        <img class="comment__user-avatar" width="40" src={avatar} alt="avatar" />
+      {/await}
+    </div>
+
+    <TextArea bind:content={replyContent} />
+
+    <Button
+      on:click={async () => {
+        replySending = true;
+        await onReply(comment.id, replyContent);
+        reply = false;
+        replySending = false;
+      }}
+    >
+      SEND
+    </Button>
+  </div>
+{/if}
 
 <style scoped>
   .comment {
