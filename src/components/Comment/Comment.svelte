@@ -1,28 +1,23 @@
 <script lang="ts">
-  import { useCommentsService } from '../../services/comments';
+  import { getContext } from 'svelte';
   import type { Comment } from '../../services/comments/types';
   import Badge from '../Badge.svelte';
   import Button from '../Button.svelte';
   import LikeCounter from '../LikeCounter.svelte';
+  import { COMMENTS, type CommentsContext } from './CommentsProvider.svelte';
 
-  export let comment: Comment;
+  export let comment: Comment = undefined;
+  export let replyingTo: string = undefined;
 
-  const commentsService = useCommentsService();
-  const currentUser = commentsService.getCurrentUser();
+  const { currentUser, onDelete, onEdit, onReply } = getContext<CommentsContext>(COMMENTS);
 
-  $: isYou = comment.user.username === currentUser.username;
+  $: isYou = comment?.user?.username === $currentUser?.username;
   $: avatarPromise = import(`../../assets/images/avatars/${comment.user.image.png}`);
 
-  console.log(comment.user.image);
-
-  const onDelete = () => {};
-
-  const onReply = () => {};
-
-  const onEdit = () => {};
+  let loading = false;
 </script>
 
-<div class="comment">
+<div class="comment {loading ? 'comment--disabled' : ''}">
   <div class="comment__like-counter">
     <LikeCounter score={comment.score} orientation="vertical" />
   </div>
@@ -45,16 +40,25 @@
 
   <div class="comment__buttons">
     {#if isYou}
-      <Button on:click={onDelete} icon="delete" color="red" type="text-only">Delete</Button>
-      <Button on:click={onEdit} icon="edit" type="text-only">Edit</Button>
+      <Button
+        on:click={async () => {
+          loading = true;
+          await onDelete(comment.id);
+          loading = false;
+        }}
+        icon="delete"
+        color="red"
+        type="text-only">Delete</Button
+      >
+      <Button on:click={() => onEdit(comment.id, '')} icon="edit" type="text-only">Edit</Button>
     {:else}
-      <Button on:click={onReply} icon="reply" type="text-only">Reply</Button>
+      <Button on:click={() => onReply(comment.id, '')} icon="reply" type="text-only">Reply</Button>
     {/if}
   </div>
 
   <p class="comment__content">
-    {#if comment.replyingTo}
-      <span class="comment__replying-to">@{comment.replyingTo}</span>
+    {#if replyingTo}
+      <span class="comment__replying-to">{replyingTo}</span>
     {/if}
     {comment.content}
   </p>
@@ -69,6 +73,12 @@
     column-gap: 20px;
     padding: 20px;
     border-radius: 12px;
+  }
+
+  .comment--disabled {
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.4;
   }
 
   .comment__like-counter {

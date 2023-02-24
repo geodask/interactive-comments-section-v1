@@ -1,18 +1,39 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import Badge from './components/Badge.svelte';
   import Button from './components/Button.svelte';
-  import CommentThread from './components/Comment/CommentThread.svelte';
-  import NewComment from './components/Comment/NewComment.svelte';
+  import Comments from './components/Comment/Comments.svelte';
+  import CommentsProvider from './components/Comment/CommentsProvider.svelte';
   import LikeCounter from './components/LikeCounter.svelte';
   import Modal from './components/Modal.svelte';
   import TextArea from './components/TextArea.svelte';
   import { useCommentsService } from './services/comments';
-  import type { Comment } from './services/comments/types';
+  import type { Comment, User } from './services/comments/types';
 
   export let openModal = false;
 
   const commentsService = useCommentsService();
-  const comments: Comment[] = commentsService.getComments();
+
+  let comments: Comment[];
+  let currentUser: User;
+
+  onMount(async () => {
+    currentUser = await commentsService.getCurrentUser();
+    comments = await commentsService.getComments();
+  });
+
+  const onDelete = async (event: CustomEvent<{ id: number }>) => {
+    await commentsService.deleteComment(event.detail.id);
+    comments = await commentsService.getComments();
+  };
+
+  const onReply = (event: CustomEvent<{ id: number }>) => {
+    console.log('reply to comment');
+  };
+
+  const onEdit = (event: CustomEvent<{ id: number; content: string }>) => {
+    console.log('update comment');
+  };
 </script>
 
 <main>
@@ -59,8 +80,9 @@
   </Modal>
 
   <div class="container">
-    <CommentThread {comments} />
-    <NewComment />
+    <CommentsProvider>
+      <Comments />
+    </CommentsProvider>
   </div>
 </main>
 
