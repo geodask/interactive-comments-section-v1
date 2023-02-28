@@ -101,9 +101,8 @@
 </div>
 
 {#if openReply}
-  <div>
-    <CommentNew bind:open={openReply} replyingTo={comment} />
-  </div>
+  <br />
+  <CommentNew bind:open={openReply} replyingTo={comment} />
 {/if}
 
 <style scoped>
