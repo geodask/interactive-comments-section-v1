@@ -3,9 +3,10 @@
   import type { Comment } from '../services/comments/types';
   import Badge from './Badge.svelte';
   import Button from './Button.svelte';
-  import LikeCounter from './LikeCounter.svelte';
   import CommentNew from './CommentNew.svelte';
   import { COMMENTS_KEY, type CommentsContext } from './CommentsProvider.svelte';
+  import LikeCounter from './LikeCounter.svelte';
+  import TextArea from './TextArea.svelte';
 
   export let comment: Comment = undefined;
 
@@ -16,6 +17,33 @@
 
   let loading = false;
   let openReply = false;
+  let editMode = false;
+  let newContent = comment.content;
+
+  const onClick = async (action: 'edit' | 'delete' | 'reply' | 'update' | 'cancelEdit') => {
+    if (action === 'reply') {
+      openReply = !openReply;
+      return;
+    }
+    if (action === 'edit') {
+      editMode = true;
+      return;
+    }
+
+    if (action === 'cancelEdit') {
+      editMode = false;
+      return;
+    }
+
+    loading = true;
+    if (action === 'delete') {
+      await onDelete(comment.id);
+    } else if (action === 'update') {
+      await onEdit(comment.id, newContent);
+      editMode = false;
+    }
+    loading = false;
+  };
 </script>
 
 <div class="comment {loading ? 'comment--disabled' : ''}">
@@ -41,41 +69,41 @@
     <Badge color="gray" type="text-only" size="lg">{comment.createdAt}</Badge>
   </div>
 
-  <div class="comment__buttons">
-    {#if isYou}
-      <Button
-        on:click={async () => {
-          loading = true;
-          await onDelete(comment.id);
-          loading = false;
-        }}
-        icon="delete"
-        color="red"
-        type="text-only">Delete</Button
-      >
-      <Button on:click={() => onEdit(comment.id, '')} icon="edit" type="text-only">Edit</Button>
-    {:else}
-      <Button
-        on:click={() => {
-          openReply = true;
-        }}
-        icon="reply"
-        type="text-only">Reply</Button
-      >
-    {/if}
-  </div>
+  {#if !editMode}
+    <div class="comment__buttons">
+      {#if isYou}
+        <Button on:click={() => onClick('delete')} icon="delete" color="red" type="text-only">
+          Delete
+        </Button>
+        <Button on:click={() => onClick('edit')} icon="edit" type="text-only">Edit</Button>
+      {:else}
+        <Button on:click={() => onClick('reply')} icon="reply" type="text-only">Reply</Button>
+      {/if}
+    </div>
+  {/if}
 
   <p class="comment__content">
-    {#if comment.replyingTo}
-      <span class="comment__replying-to">{comment.replyingTo}</span>
+    {#if editMode}
+      <div class="comment__edit-area">
+        <TextArea bind:content={newContent} />
+        <div>
+          <Button color="gray" on:click={() => onClick('cancelEdit')}>CANCEL</Button>
+          <Button on:click={() => onClick('update')}>UPDATE</Button>
+        </div>
+      </div>
+    {:else}
+      {#if comment.replyingTo}
+        <span class="comment__replying-to">{comment.replyingTo}</span>
+      {/if}
+      {comment.content}
     {/if}
-    {comment.content}
   </p>
 </div>
 
 {#if openReply}
-  <br />
-  <CommentNew bind:open={openReply} replyingTo={comment} />
+  <div>
+    <CommentNew bind:open={openReply} replyingTo={comment} />
+  </div>
 {/if}
 
 <style scoped>
@@ -110,12 +138,6 @@
     color: var(--color-neutral-dark-blue);
   }
 
-  .comment--reply .comment__buttons {
-    grid-row: 1 / 3;
-    grid-column: 3 / 4;
-    justify-self: flex-end;
-  }
-
   .comment__date {
     align-self: center;
   }
@@ -129,7 +151,17 @@
     color: var(--color-neutral-grayish-blue);
   }
 
-  .comment__replying-to {
+  .comment__edit-area {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .comment__edit-area > :last-child {
+    margin-top: 1rem;
+    align-self: flex-end;
+  }
+
+  .comment__content .comment__replying-to {
     color: var(--color-primary-moderate-blue);
     font-weight: 700;
   }
