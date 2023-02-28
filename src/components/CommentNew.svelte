@@ -1,16 +1,34 @@
 <script lang="ts">
   import { getContext } from 'svelte';
+  import type { Comment } from '../services/comments/types';
   import Button from './Button.svelte';
   import { COMMENTS_KEY, type CommentsContext } from './CommentsProvider.svelte';
   import TextArea from './TextArea.svelte';
 
-  export let replyToId: number = undefined;
+  export let replyingTo: Comment = undefined;
   export let open: boolean = true;
 
   const { currentUser, onReply, onCreate } = getContext<CommentsContext>(COMMENTS_KEY);
 
   let loading = false;
   let content: string = '';
+
+  const onClick = async () => {
+    try {
+      loading = true;
+      if (!replyingTo) {
+        await onCreate(content);
+      } else {
+        open = true;
+        await onReply(replyingTo.id, content);
+        open = false;
+      }
+      content = '';
+    } catch {
+    } finally {
+      loading = false;
+    }
+  };
 </script>
 
 {#if open}
@@ -20,32 +38,20 @@
     {/if}
 
     <div class="comment__content">
-      <TextArea bind:content />
+      <TextArea
+        placeholder={replyingTo ? `Reply to ${replyingTo.user.username}...` : 'Add a new comment...'}
+        bind:content
+      />
     </div>
 
     <div class="comment__buttons">
-      {#if replyToId}
-        <Button
-          on:click={async () => {
-            loading = true;
-            await onReply(replyToId, content);
-            loading = false;
-            open = false;
-          }}
-        >
+      <Button on:click={onClick}>
+        {#if replyingTo}
           REPLY
-        </Button>
-      {:else}
-        <Button
-          on:click={async () => {
-            loading = true;
-            await onCreate(content);
-            loading = false;
-          }}
-        >
+        {:else}
           SEND
-        </Button>
-      {/if}
+        {/if}
+      </Button>
     </div>
   </div>
 {/if}
@@ -54,9 +60,7 @@
   .comment {
     display: grid;
     grid-template-columns: auto 1fr auto;
-
     grid-template-rows: auto;
-
     background: var(--color-neutral-white);
     column-gap: 20px;
     padding: 20px;
@@ -67,20 +71,5 @@
     pointer-events: none;
     cursor: not-allowed;
     opacity: 0.4;
-  }
-
-  .comment__user-info {
-    grid-column: 1 / 2;
-    align-self: flex-start;
-  }
-
-  .comment__user-info {
-    grid-column: 1 / 2;
-    align-self: flex-start;
-  }
-
-  .comment__content {
-    grid-row: 1 / 3;
-    grid-column: 2 / 3;
   }
 </style>

@@ -8,7 +8,6 @@
   import { COMMENTS_KEY, type CommentsContext } from './CommentsProvider.svelte';
 
   export let comment: Comment = undefined;
-  export let replyingTo: string = undefined;
 
   const { currentUser, onDelete, onEdit, onScoreUpdate } =
     getContext<CommentsContext>(COMMENTS_KEY);
@@ -67,8 +66,8 @@
   </div>
 
   <p class="comment__content">
-    {#if replyingTo}
-      <span class="comment__replying-to">{replyingTo}</span>
+    {#if comment.replyingTo}
+      <span class="comment__replying-to">{comment.replyingTo}</span>
     {/if}
     {comment.content}
   </p>
@@ -76,7 +75,7 @@
 
 {#if openReply}
   <br />
-  <CommentNew bind:open={openReply} replyToId={comment.id} />
+  <CommentNew bind:open={openReply} replyingTo={comment} />
 {/if}
 
 <style scoped>

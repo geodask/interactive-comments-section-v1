@@ -14,14 +14,14 @@
 {#each commentsArray as comment (comment.id)}
   {#if comment.replies.length > 0}
     <div class="comment-thread">
-      <CommentComponent {comment} replyingTo={comment.replyingTo} />
+      <CommentComponent {comment} />
       <div class="comment-thread__reply">
         <svelte:self nestedComments={comment.replies} />
       </div>
     </div>
   {:else}
     <div class="comment-thread">
-      <CommentComponent {comment} replyingTo={comment.replyingTo} />
+      <CommentComponent {comment} />
     </div>
   {/if}
 {/each}
