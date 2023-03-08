@@ -228,10 +228,10 @@
       margin-top: 1rem;
       align-self: flex-end;
     }
+  }
 
-    .comment__content .comment__replying-to {
-      color: var(--color-primary-moderate-blue);
-      font-weight: 700;
-    }
+  .comment__content .comment__replying-to {
+    color: var(--color-primary-moderate-blue);
+    font-weight: 700;
   }
 </style>
