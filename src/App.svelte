@@ -1,7 +1,7 @@
 <script lang="ts">
-  import CommentNew from './components/CommentNew.svelte';
-  import Comments from './components/Comments.svelte';
-  import CommentsProvider from './components/CommentsProvider.svelte';
+  import CommentNew from '@/components/views/comments/CommentNew.svelte';
+  import Comments from '@/components/views/comments/Comments.svelte';
+  import CommentsProvider from '@/components/providers/CommentsProvider.svelte';
 </script>
 
 <main>
@@ -24,7 +24,7 @@
 
 <style>
   .container {
-    width: 60%;
+    width: 50%;
     margin: auto;
   }
   .attribution {
@@ -35,9 +35,10 @@
     color: hsl(228, 45%, 44%);
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: 1024px) {
     .container {
       width: 100%;
+      padding: 1rem;
     }
   }
 </style>

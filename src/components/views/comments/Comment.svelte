@@ -1,14 +1,17 @@
 <script lang="ts" context="module">
   import { getContext } from 'svelte';
   import { onMount } from 'svelte';
-  import type { Comment } from '../services/comments/types';
-  import { formatToRelativeTime } from '../utils/date';
-  import Badge from './Badge.svelte';
-  import Button from './Button.svelte';
-  import CommentNew from './CommentNew.svelte';
-  import { COMMENTS_KEY, type CommentsContext } from './CommentsProvider.svelte';
-  import LikeCounter from './LikeCounter.svelte';
-  import TextArea from './TextArea.svelte';
+  import type { Comment } from '@/services/comments/types';
+  import { formatToRelativeTime } from '@/utils/date';
+  import Badge from '@/components/views/general/Badge.svelte';
+  import Button from '@/components/views/general/Button.svelte';
+  import CommentNew from '@/components/views/comments/CommentNew.svelte';
+  import {
+    COMMENTS_KEY,
+    type CommentsContext,
+  } from '@/components/providers/CommentsProvider.svelte';
+  import LikeCounter from '@/components/views/general/LikeCounter.svelte';
+  import TextArea from '@/components/views/general/TextArea.svelte';
 </script>
 
 <script lang="ts">
@@ -152,6 +155,7 @@
     .comment__content {
       grid-column: 1 / 4;
       grid-row: 2 / 3;
+      color: var(--color-neutral-grayish-blue);
     }
 
     .comment__buttons {

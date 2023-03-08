@@ -1,9 +1,9 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import iconMinusActive from '../assets/images/icon-minus-active.svg';
-  import iconMinus from '../assets/images/icon-minus.svg';
-  import iconPlusActive from '../assets/images/icon-plus-active.svg';
-  import iconPlus from '../assets/images/icon-plus.svg';
+  import iconMinusActive from '@/assets/images/icon-minus-active.svg';
+  import iconMinus from '@/assets/images/icon-minus.svg';
+  import iconPlusActive from '@/assets/images/icon-plus-active.svg';
+  import iconPlus from '@/assets/images/icon-plus.svg';
 
   export let score: number = 0;
   export let orientation: 'horizontal' | 'vertical' = 'vertical';

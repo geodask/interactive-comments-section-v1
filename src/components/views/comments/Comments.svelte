@@ -1,8 +1,11 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import type { Comment } from '../services/comments/types';
+  import type { Comment } from '@/services/comments/types';
   import CommentComponent from './Comment.svelte';
-  import { COMMENTS_KEY, type CommentsContext } from './CommentsProvider.svelte';
+  import {
+    COMMENTS_KEY,
+    type CommentsContext,
+  } from '@/components/providers/CommentsProvider.svelte';
 
   export let nestedComments: Comment[] = undefined;
 

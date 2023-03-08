@@ -1,9 +1,12 @@
 <script lang="ts">
   import { getContext } from 'svelte';
-  import type { Comment } from '../services/comments/types';
-  import Button from './Button.svelte';
-  import { COMMENTS_KEY, type CommentsContext } from './CommentsProvider.svelte';
-  import TextArea from './TextArea.svelte';
+  import type { Comment } from '@/services/comments/types';
+  import Button from '@/components/views/general/Button.svelte';
+  import {
+    COMMENTS_KEY,
+    type CommentsContext,
+  } from '@/components/providers/CommentsProvider.svelte';
+  import TextArea from '@/components/views/general/TextArea.svelte';
 
   export let replyingTo: Comment = undefined;
   export let open: boolean = true;
@@ -39,7 +42,9 @@
 
     <div class="comment__content">
       <TextArea
-        placeholder={replyingTo ? `Reply to ${replyingTo.user.username}...` : 'Add a new comment...'}
+        placeholder={replyingTo
+          ? `Reply to ${replyingTo.user.username}...`
+          : 'Add a new comment...'}
         bind:content
       />
     </div>

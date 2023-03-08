@@ -1,7 +1,7 @@
 <script lang="ts">
-  import iconDelete from '../assets/images/icon-delete.svg';
-  import iconEdit from '../assets/images/icon-edit.svg';
-  import iconReply from '../assets/images/icon-reply.svg';
+  import iconDelete from '@/assets/images/icon-delete.svg';
+  import iconEdit from '@/assets/images/icon-edit.svg';
+  import iconReply from '@/assets/images/icon-reply.svg';
 
   export let icon: 'reply' | 'delete' | 'edit' | undefined = undefined;
   export let color: 'blue' | 'red' | 'gray' = 'blue';

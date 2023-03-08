@@ -1,8 +1,8 @@
 <script lang="ts" context="module">
   import { onMount, setContext } from 'svelte';
   import { writable, type Writable } from 'svelte/store';
-  import { useCommentsService } from '../services/comments';
-  import type { Comment, User } from '../services/comments/types';
+  import { useCommentsService } from '../../services/comments';
+  import type { Comment, User } from '../../services/comments/types';
 
   export const COMMENTS_KEY = Symbol('comments');
 
