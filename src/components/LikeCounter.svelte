@@ -77,6 +77,19 @@
     flex-direction: column;
   }
 
+  @media (max-width: 768px) {
+    .counter--horizontal {
+      display: inline-flex;
+      align-items: baseline;
+    }
+
+    .counter--vertical {
+      flex-direction: row;
+      display: inline-flex;
+      align-items: baseline;
+    }
+  }
+
   .counter__label {
     font-weight: 500;
     color: var(--color-primary-moderate-blue);

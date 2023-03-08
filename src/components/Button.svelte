@@ -29,7 +29,6 @@
     --main-color: var(--color-primary-moderate-blue);
 
     border: none;
-    padding: 0.5rem 0.8rem;
     font-size: 14px;
     font-weight: 500;
     display: inline-flex;
@@ -70,6 +69,7 @@
 
   .button--text-only {
     background: none;
+    padding: 8px;
     color: var(--main-color);
   }
 

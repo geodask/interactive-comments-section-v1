@@ -24,7 +24,7 @@
 
 <style>
   .container {
-    width: 50%;
+    width: 60%;
     margin: auto;
   }
   .attribution {
@@ -33,5 +33,11 @@
   }
   .attribution a {
     color: hsl(228, 45%, 44%);
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      width: 100%;
+    }
   }
 </style>
